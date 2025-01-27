@@ -25,11 +25,10 @@
   <link href="<?= base_url('asset/NiceAdmin/') ?>assets/vendor/quill/quill.bubble.css" rel="stylesheet">
   <link href="<?= base_url('asset/NiceAdmin/') ?>assets/vendor/remixicon/remixicon.css" rel="stylesheet">
   <link href="<?= base_url('asset/NiceAdmin/') ?>assets/vendor/simple-datatables/style.css" rel="stylesheet">
-
-
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 
   <!-- Template Main CSS File -->
   <link href="<?= base_url('asset/NiceAdmin/') ?>assets/css/style.css" rel="stylesheet">
