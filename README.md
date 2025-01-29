@@ -1,4 +1,4 @@
-# Selaras - CRM Penjualan Jasa Jahit
+# Selaras - Aplikasi CRM Penjualan Jasa Jahit
 
 ## Deskripsi
 **Selaras** adalah aplikasi CRM (Customer Relationship Management) yang dirancang khusus untuk bisnis penjualan jasa jahit. Aplikasi ini membantu dalam mengelola pesanan pelanggan, menyediakan fitur toko online, serta memungkinkan pelanggan untuk melakukan kustomisasi produk dan pemesanan langsung.
