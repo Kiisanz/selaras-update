@@ -441,10 +441,11 @@
         <?php foreach ($pelanggan_list as $pelanggan) : ?> {
                 alamat: "<?= $pelanggan->alamat_customer ?>",
                 tglTransaksi: "<?= $pelanggan->tgl_transaksi_terakhir ?>",
-                totalTransaksi: <?= $pelanggan->total_transaksi ?>
+                totalTransaksi: <?= $pelanggan->total_custom_qty ?>
             },
         <?php endforeach; ?>
     ];
+
 
     const ctx = document.getElementById('myChart').getContext('2d');
 
