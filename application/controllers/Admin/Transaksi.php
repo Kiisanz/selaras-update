@@ -108,7 +108,6 @@ class Transaksi extends CI_Controller
 
 	public function check_new_orders()
 	{
-		// Query untuk mengambil data pesanan baru
 		$pesanan_masuk = $this->db->query('
         SELECT 
             transaksi.id_transaksi AS order_id, 

@@ -9,7 +9,7 @@ class mKatalog extends CI_Model
         $this->db->from('produk');
         $this->db->join('size', 'produk.id_produk = size.id_produk', 'left');
         $this->db->join('diskon', 'diskon.id_produk = produk.id_produk', 'left');
-        $this->db->group_by('size.id_produk');
+        // $this->db->group_by('size.id_produk');
         return $this->db->get()->result();
     }
 

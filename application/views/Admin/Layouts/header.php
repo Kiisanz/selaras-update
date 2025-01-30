@@ -106,11 +106,12 @@
                         </li>
                     `;
                                 notificationList.append(headerItem);
-
+                                let listItem = ''
                                 // Hanya menambahkan notifikasi baru jika ada
                                 if (response?.notifikasi?.length > 0) {
                                     response.notifikasi.forEach(function(notif, idx) {
-                                        let listItem = `
+                                        if (response.type === "produk") {
+                                            listItem = `
           <li class="notification-item">
     <a href="<?= base_url('Admin/Transaksi/pembayaran') ?>" class="text-decoration-none">
         <div class="d-flex align-items-center px-3">
@@ -137,9 +138,38 @@
 </li>
 <li><hr class="dropdown-divider"></li>
 
+                            `;
+                                        } else {
+                                            listItem = `
+          <li class="notification-item">
+    <a href="<?= base_url('Admin/Custom') ?>" class="text-decoration-none">
+        <div class="d-flex align-items-center px-3">
 
+            <div>
+                <!-- Judul notifikasi yang lebih kecil dan bold -->
+                <h6 class="mb-1 fw-bold">Pesanan Baru</h6> <!-- Bold hanya pada judul -->
+
+                <!-- Deskripsi dengan font yang lebih tipis -->
+                <p class="text-muted mb-1">${notif}</p> <!-- Deskripsi dengan margin bawah lebih kecil -->
+
+                <!-- Waktu dalam format lokal -->
+                <p class="text-muted small mb-0">${new Date(response?.date[idx]).toLocaleString("en-CA",{
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+})}</p>
+            </div>
+        </div>
+    </a>
+</li>
+<li><hr class="dropdown-divider"></li>
 
                             `;
+
+                                        }
                                         notificationList.append(listItem);
                                     });
                                 }
