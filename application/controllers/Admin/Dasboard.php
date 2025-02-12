@@ -1,4 +1,4 @@
-<?php
+application/controllers/Admin/Dasboard.php<?php
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
@@ -22,10 +22,11 @@ class Dasboard extends CI_Controller
             'user' => $this->mDashboard->user(),
             'top_selling' => $this->mDashboard->top_selling(),
             'pelanggan_list' => $this->mDashboard->pelanggan_list(),
-            'pesanan' => $this->mTransaksi->pesanan_masuk()
-
-
+            'pesanan' => $this->mTransaksi->pesanan_masuk(),
+            'sales' => $this->mDashboard->get_sales_data(),
+            'custom' => $this->mDashboard->get_custom_order_data(),
         );
+        
         $this->load->view('Admin/layouts/head');
         $this->load->view('Admin/layouts/header', $data);
         $this->load->view('Admin/layouts/aside', $data);

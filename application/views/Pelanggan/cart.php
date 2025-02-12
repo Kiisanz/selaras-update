@@ -29,17 +29,21 @@
                             <td class="align-middle">
                                 <div class="input-group quantity mx-auto" style="width: 150px;">
                                     <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-minus">
+                                        <button type="button" class="btn btn-sm btn-primary btn-minus">
                                             <i class="fa fa-minus"></i>
                                         </button>
                                     </div>
-                                    <input type="number" name="<?= $i . '[qty]' ?>" min="1" max="<?= $value['stok'] ?>" class="form-control form-control-sm bg-secondary text-center product-quantity" value="<?= $value['qty'] ?>">
+                                    <input type="number" name="<?= $i . '[qty]' ?>" min="1" max="<?= $value['stok'] ?>" 
+                                        class="form-control form-control-sm bg-secondary text-center product-quantity" 
+                                        value="<?= $value['qty'] ?>" data-stok="<?= $value['stok'] ?>">
+
                                     <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-primary btn-plus">
+                                        <button type="button" class="btn btn-sm btn-primary btn-plus">
                                             <i class="fa fa-plus"></i>
                                         </button>
                                     </div>
                                 </div>
+                                <small class="text-danger error-message" style="display: none;">Jumlah melebihi stok!</small>
                             </td>
                             <td><?= $value['stok'] ?></td>
                             <td class="align-middle">Rp. <span class="product-total"><?= number_format($value['price'] * $value["qty"]) ?></span></td>
@@ -65,14 +69,61 @@
                     </div>
                 </div>
                 <div class="card-footer border-secondary bg-transparent">
-                    <a href="<?= base_url('pelanggan/katalog/checkout') ?>" class="btn btn-block btn-dark my-3 py-3">Lanjutkan ke pembayaran</a>
+                    <a id="checkout-btn" href="<?= base_url('pelanggan/katalog/checkout') ?>" class="btn btn-block btn-dark my-3 py-3">Lanjutkan ke pembayaran</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
 <!-- Cart End -->
 <script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".quantity").forEach(function(container) {
+        let input = container.querySelector(".product-quantity");
+        let btnMinus = container.querySelector(".btn-minus");
+        let btnPlus = container.querySelector(".btn-plus");
+        let checkoutbtn = document.getElementById("checkout-btn")
+        let errorMessage = container.nextElementSibling; 
+
+        function validateInput() {
+            let maxStok = parseInt(input.getAttribute("max"));
+            let currentValue = parseInt(input.value);
+
+            if (currentValue > maxStok) {
+                errorMessage.style.display = "block"; 
+                checkoutbtn.classList.add("disabled")
+                input.classList.add("border-danger"); 
+            } else {
+                errorMessage.style.display = "none"; 
+                input.classList.remove("border-danger"); 
+            }
+        }
+
+        input.addEventListener("input", validateInput);
+
+        btnMinus.addEventListener("click", function() {
+            let min = parseInt(input.getAttribute("min"));
+            let value = parseInt(input.value);
+            if (value > min) {
+                input.value = value - 1;
+                validateInput();
+            }
+        });
+
+        btnPlus.addEventListener("click", function() {
+            let max = parseInt(input.getAttribute("max"));
+            let value = parseInt(input.value);
+            if (value < max) {
+                input.value = value + 1;
+                validateInput();
+            }
+        });
+    });
+});
+
     // Ambil elemen-elemen yang diperlukan
     const checkboxes = document.querySelectorAll('.product-checkbox');
     const quantityInputs = document.querySelectorAll('.product-quantity');

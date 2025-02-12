@@ -80,11 +80,43 @@ class mDashboard extends CI_Model
         ")->result();
     }
 
-    public function get_pelanggan_data()
+   public function get_sales_data()
     {
-        $data = $this->pelanggan_list();
-        echo json_encode($data);
+        return $this->db->query("
+            SELECT 
+                p.nama_produk, 
+                s.size, 
+                SUM(dt.qty) AS total, 
+                DATE(t.tgl_transaksi) AS tanggal,
+                c.alamat_customer AS alamat
+            FROM detail_transaksi dt
+            INNER JOIN size s ON dt.id_size = s.id_size
+            INNER JOIN produk p ON s.id_produk = p.id_produk
+            INNER JOIN transaksi t ON dt.id_transaksi = t.id_transaksi
+            INNER JOIN customer c ON t.id_customer = c.id_customer
+            GROUP BY p.nama_produk, s.size, DATE(t.tgl_transaksi), c.alamat_customer
+            ORDER BY total DESC
+        ")->result();
+    } 
+
+    public function get_custom_order_data()
+    {
+        return $this->db->query("
+            SELECT 
+            SUM(c.qty_custom) AS total_pcs, 
+            COUNT(DISTINCT t.id_customer) AS total_pelanggan,
+            GROUP_CONCAT(DISTINCT cu.nama_customer SEPARATOR ', ') AS nama_pelanggan,
+            t.alamat AS alamat, 
+            DATE(t.tgl_transaksi) AS tanggal
+            FROM custom c
+            INNER JOIN transaksi t ON c.id_transaksi = t.id_transaksi
+            LEFT JOIN customer cu ON t.id_customer = cu.id_customer
+            WHERE t.status_pesan = 1
+            GROUP BY t.alamat, DATE(t.tgl_transaksi)
+            ORDER BY total_pcs DESC;
+            ")->result();
     }
+
 }    
 
 /* End of file mDasboard.php */

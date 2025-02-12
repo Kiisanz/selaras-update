@@ -116,7 +116,7 @@
                                         } else {
                                             if ($value->total_bayar != '0' && $value->metode_pembayaran == 'transfer') {
                                             ?>
-                                                <?php echo form_open_multipart('pelanggan/katalog/upload_bukti_pembayaran/' . $value->id_transaksi); ?>
+                                                <?php echo form_open_multipart('pelanggan/katalog/upload_bukti_pembayaran/' . $value->transaksi_id_transaksi); ?>
                                                 <div class="mt-5">
                                                     <label>Bukti Pembayaran</label>
                                                     <p>No. Rekening: <strong>0123-456-789</strong></p>
@@ -164,7 +164,7 @@
                                             <p class="w-75">Pesanan Anda sedang dalam perjalanan. Silakan siapkan pembayaran saat pesanan diterima!</p>
 
                                         <?php } ?>
-                                        <a class="btn btn-primary mt-5" href="<?= base_url('pelanggan/katalog/pesanan_diterima/' . $value->id_transaksi) ?>">Pesanan Diterima</a>
+                                        <a class="btn btn-primary mt-5" href="<?= base_url('pelanggan/katalog/pesanan_diterima/' . $value->transaksi_id_transaksi) ?>">Pesanan Diterima</a>
 
                                     <?php }
                                     if ($value->status_order == '5') { ?>
@@ -276,10 +276,6 @@
                                                 <p class="mb-0 text-muted">
                                                     Ukuran: <strong><?= $value->size; ?></strong>
                                                 </p>
-                                            <?php endif; ?>
-
-                                            <?php if ($value->status_pesan == '1') : ?>
-                                                <span class="badge bg-warning text-dark">Pesanan Custom</span>
                                             <?php endif; ?>
 
                                             <small><?= $value->update_at ?></small><br>
@@ -445,7 +441,7 @@
 
 
 
-
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script>
     const baseUrl = '<?= base_url('Admin/KelolaDataMaster/get_voucher') ?>'
 

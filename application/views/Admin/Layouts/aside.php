@@ -141,10 +141,11 @@
 	$(document).ready(function() {
 		function updatePesanan() {
 			$.ajax({
-				url: '<?= base_url('Admin/Transaksi/check_new_orders') ?>', // URL untuk mengambil jumlah pesanan
+				url: '<?= base_url('Admin/Transaksi/check_new_orders') ?>', 
 				type: 'GET',
 				dataType: 'json',
 				success: function(response) {
+					console.log(response)
 					if (response.jumlah_pesanan == "0") {
 						$('#indicator-badges').addClass("d-none");
 					} else {

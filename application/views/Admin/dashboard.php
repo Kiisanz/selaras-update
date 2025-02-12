@@ -1,49 +1,13 @@
 <main id="main" class="main">
     <div class="pagetitle">
         <h1>Dashboard</h1>
-    </div><!-- End Page Title -->
+    </div>
 
     <section class="section dashboard">
         <div class="row">
-            <!-- Filter Produk -->
-            <div class="col-14 col-lg-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Alamat Pelanggan</h5>
-                        <select id="productFilter" class="form-select" onchange="filterData()">
-                            <option value="">Semua Produk</option>
-                            <?php
-                            $uniqueProducts = [];
-                            foreach ($top_selling as $value) {
-                                $productKey = $value['nama_produk'] . ' (' . $value['size'] . ')';
-                                if (!isset($uniqueProducts[$productKey])) {
-                                    $uniqueProducts[$productKey] = true;
-                                    echo '<option value="' . htmlspecialchars($productKey) . '">' . htmlspecialchars($productKey) . '</option>';
-                                }
-                            }
-                            ?>
-                        </select>
-
-                        <select id="addressFilter" class="form-select mt-2" onchange="filterData()">
-                            <option value="">Semua Alamat</option>
-                            <?php foreach (array_unique(array_column($pelanggan_list, 'alamat_customer')) as $alamat) : ?>
-                                <option value="<?= $alamat ?>"><?= $alamat ?></option>
-                            <?php endforeach; ?>
-                        </select>
-
-                        <div class="col-lg-12 col-md-12 col-sm-12 mt-2">
-                            <label for="dateFilter" style="font-size: 14px; margin-bottom: 4px;">Pilih Tanggal:</label>
-                            <input type="date" id="dateFilter" class="form-control" onchange="filterData()" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sales & Revenue Cards -->
             <div class="col-12 col-lg-8">
                 <div class="row">
                     <div class="col-12 col-lg-6">
-                        <!-- Sales Card -->
                         <div class="card info-card sales-card mb-4">
                             <div class="card-body">
                                 <h5 class="card-title">Pelanggan <span>| Jahit</span></h5>
@@ -56,11 +20,10 @@
                                     </div>
                                 </div>
                             </div>
-                        </div><!-- End Sales Card -->
+                        </div>
                     </div>
 
                     <div class="col-12 col-lg-6">
-                        <!-- Revenue Card -->
                         <div class="card info-card revenue-card">
                             <div class="card-body">
                                 <h5 class="card-title">Pemasukkan <span>| Transaksi</span></h5>
@@ -69,51 +32,70 @@
                                         <i class="bi bi-currency-dollar"></i>
                                     </div>
                                     <div class="ps-3">
-                                        <strong><small>Rp. <?= number_format($pemasukkan->pemasukkan) ?></small></strong>
+                                        <strong><h6>Rp. <?= number_format($pemasukkan->pemasukkan) ?></h6></strong>
                                     </div>
                                 </div>
                             </div>
-                        </div><!-- End Revenue Card -->
-                    </div>
-                </div><!-- End Inner Row -->
-            </div><!-- End Sales & Revenue Cards -->
-        </div><!-- End Main Row -->
-
-        <div class="row">
-            <!-- OLAP Chart -->
-            <div class="col-12 col-lg-8 d-flex flex-column">
-                <div class="card flex-grow-1">
-                    <div id="topProductChartContainer" class="card-body">
-                        <h5 class="card-title">Grafik OLAP</h5>
-                        <canvas id="topProductChart"></canvas>
+                        </div>
                     </div>
                 </div>
-            </div><!-- End OLAP Chart -->
+            </div>
 
-            <!-- Pie Chart for Pelanggan -->
-            <div class="col-8 col-lg-4 d-flex flex-column">
-                <div class="card flex-grow-1">
+            <div class="col-14 col-lg-4">
+                <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Distribusi Pelanggan <span>| Berdasarkan Alamat</span></h5>
-                        <canvas id="customerPieChart" width="100" height="100"></canvas>
+                        <h5 class="card-title">Alamat Pelanggan</h5>
+                        <select id="productFilter" class="form-select">
+                            <option value="">Semua Nama Produk</option>
+                                <?php
+                                $productSizes = [];
+                                foreach ($sales as $value) {
+                                    $nama = $value->nama_produk;
+                                    $size = $value->ukuran;
+
+                                    if (!isset($productSizes[$nama])) {
+                                        $productSizes[$nama] = [];
+                                    }
+                                    if (!in_array($size, $productSizes[$nama])) {
+                                        $productSizes[$nama][] = $size;
+                                    }
+                                }
+
+                                foreach (array_keys($productSizes) as $productName) {
+                                    echo '<option value="' . htmlspecialchars($productName) . '">' . htmlspecialchars($productName) . '</option>';
+                                }
+                                ?>
+                        </select>
+                        <select id="addressFilter" class="form-select mt-2">
+                            <option value="">Semua Alamat</option>
+                            <?php foreach (array_unique(array_column($pelanggan_list, 'alamat_customer')) as $alamat) : ?>
+                                <option value="<?= $alamat ?>"><?= $alamat ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
-            </div><!-- End Pie Chart -->
+            </div>
         </div>
 
         <div class="row">
-            <!-- Chart Card -->
             <div class="col-12 col-md-12">
                 <div class="card shadow-sm border-0">
-                    <div class="card-body text-center">
-                        <h5 class="card-title mb-4">Distribusi Pelanggan Jasa Jahit Selaras</h5>
-                        <canvas id="myChart" style="width: 100%; max-height: 300px;"></canvas>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="card-title mb-4 mt-1">Distribusi Pelanggan dan Penjualan Jasa Jahit Selaras</h4>
+                            <div class="mb-2 mt-3">
+                                <div id="reportrange" class="form-control d-flex align-items-center gap-2">
+                                    <i class="bi bi-calendar-event-fill"></i>
+                                    <span class="flex-grow-1">Pilih tanggal</span>
+                                    <i class="bi bi-caret-down-fill"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="chart" style="width: 100%; max-height: 300px;"></div>
                     </div>
                 </div>
-            </div><!-- End Chart Card -->
-        </div><!-- End Row -->
-
-        <!-- Recent Sales -->
+            </div>
+        </div>
         <div class="col-12">
             <div class="card recent-sales overflow-auto">
                 <div class="card-body">
@@ -177,14 +159,11 @@
                             }
                             ?>
                         </tbody>
-
-
                     </table>
                 </div>
             </div>
-        </div><!-- End Recent Sales -->
+        </div>
 
-        <!-- Customers Table -->
         <div class="col-12">
             <div class="card recent-sales overflow-auto">
                 <div class="card-body">
@@ -222,415 +201,201 @@
                     </table>
                 </div>
             </div>
-        </div><!-- End Customers Table -->
         </div>
-</main><!-- End #main -->
+        </div>
+</main>
+
 
 <script>
-    let topProductChart;
-    let customerPieChart;
+$(function() {
+    "use strict";
 
-    // document.querySelectorAll('#filterAlamat, #filterTahun, #filterBulan, #dateFilter').forEach((element) => {
-    //     element.addEventListener('change', filterData);
-    // });
+    var salesData = <?php echo json_encode($sales); ?>;
+    var customOrderData = <?php echo json_encode($custom); ?>;
+    var start = moment().startOf('month');
+    var end = moment().endOf('month');
+    var chart;
 
-    // function filterData() {
-    //     const filterAlamat = document.getElementById('filterAlamat').value;
-    //     const filterTahun = document.getElementById('filterTahun').value;
-    //     const filterBulan = document.getElementById('filterBulan').value;
-    //     const dateFilterValue = document.getElementById('dateFilter')?.value || '';
-    //     const productFilterValue = document.getElementById('productFilter')?.value || '';
-
-
-    //     let yearFilterValue = '';
-    //     let monthFilterValue = '';
-    //     let dayFilterValue = '';
-
-    //     if (dateFilterValue) {
-    //         const [year, month, day] = dateFilterValue.split('-');
-    //         yearFilterValue = year;
-    //         monthFilterValue = month;
-    //         dayFilterValue = day;
-    //     }
-    //     const filteredData = filterDataPelanggan(filterAlamat, filterTahun, filterBulan);
-
-    //     updateChartPelanggan(filteredData, filterTahun, filterBulan);
-    //     updateChart(productFilterValue, addressFilterValue, yearFilterValue, monthFilterValue, dayFilterValue);
-    // }
-
-    function filterData() {
-        const productFilterValue = document.getElementById('productFilter')?.value || '';
-        const addressFilterValue = document.getElementById('addressFilter')?.value || '';
-        const dateFilterValue = document.getElementById('dateFilter')?.value || '';
-
-        let yearFilterValue = '';
-        let monthFilterValue = '';
-        let dayFilterValue = '';
-
-        if (dateFilterValue) {
-            const [year, month, day] = dateFilterValue.split('-');
-            yearFilterValue = year;
-            monthFilterValue = month;
-            dayFilterValue = day;
-        }
-
-        updateChart(productFilterValue, addressFilterValue, yearFilterValue, monthFilterValue, dayFilterValue);
-        const filteredData = filterDataPelanggan(addressFilterValue, yearFilterValue, monthFilterValue);
-        updateChartPelanggan(filteredData, yearFilterValue, monthFilterValue);
-
-    }
-
-
-    function updateChart(productFilterValue, addressFilterValue, yearFilterValue, monthFilterValue, dayFilterValue) {
-        const allPrices = <?= json_encode(array_column($top_selling, 'harga')) ?>;
-        const allProductNames = <?= json_encode(array_column($top_selling, 'nama_produk')) ?>;
-        const allSizes = <?= json_encode(array_column($top_selling, 'size')) ?>;
-        const allTotal = <?= json_encode(array_column($top_selling, 'total')) ?>;
-        const allAddresses = <?= json_encode(array_map(function ($pelanggan) {
-                                    return $pelanggan->alamat_customer;
-                                }, $pelanggan_list)) ?>;
-        const allDates = <?= json_encode(array_map(function ($transaksi) {
-                                return $transaksi['tanggal'];
-                            }, $top_selling)) ?>;
-
-        let aggregatedData = {};
-        let addressData = {};
-
-
-        allProductNames.forEach((product, index) => {
-            const productKey = `${product} (${allSizes[index]})`;
-
-            const isProductMatch = (productFilterValue === "" || productKey === productFilterValue);
-            const isAddressMatch = (addressFilterValue === "" || allAddresses[index] === addressFilterValue);
-            const isYearMatch = (yearFilterValue === "" || new Date(allDates[index]).getFullYear() == yearFilterValue);
-            const isMonthMatch = (monthFilterValue === "" || new Date(allDates[index]).getMonth() + 1 == monthFilterValue);
-            const isDayMatch = (dayFilterValue === "" || new Date(allDates[index]).getDate() == dayFilterValue);
-
-            if (isProductMatch && isAddressMatch && isYearMatch && isMonthMatch && isDayMatch) {
-                if (!aggregatedData[productKey]) {
-                    aggregatedData[productKey] = {
-                        total: 0,
-                        price: allPrices[index]
-                    };
-                }
-                aggregatedData[productKey].total += allTotal[index];
-
-                const address = allAddresses[index];
-                if (address && address !== 'null' && address !== 'undefined') {
-                    if (!addressData[address]) {
-                        addressData[address] = 0;
-                    }
-                    addressData[address] += allTotal[index];
-                }
-            }
+    $(document).ready(function() {
+        $("#addressFilter").on("change", function() {
+            updateChart();
         });
-
-        const filteredProductNames = Object.keys(aggregatedData);
-        const filteredTotals = filteredProductNames.map(product => aggregatedData[product].total);
-
-        const addressLabels = Object.keys(addressData).filter(address => address !== null && address !== undefined);
-        const addressValues = addressLabels.map(address => addressData[address]);
-
-        if (topProductChart) {
-            topProductChart.destroy();
-        }
-
-        const ctxBar = document.getElementById('topProductChart').getContext('2d');
-        topProductChart = new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: filteredProductNames,
-                datasets: [{
-                    label: 'Total Terjual',
-                    data: filteredTotals,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return value.toFixed(0);
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: 'Jumlah Terjual'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Produk (Nama & Ukuran)'
-                        },
-                        ticks: {
-                            maxRotation: 0,
-                            minRotation: 0,
-                            callback: function(value, index, values) {
-                                const label = filteredProductNames[index];
-                                return label.length > 15 ? label.slice(0, 14) + '...' : label;
-                            }
-                        }
-                    }
-                },
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `${context.label}: ${context.raw} unit`;
-                            }
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Grafik Total Penjualan'
-                    }
-                }
-            }
+        $("#productFilter").on("change", function() {
+            updateChart();
         });
-
-        if (customerPieChart) {
-            customerPieChart.destroy();
-        }
-
-        const ctxPie = document.getElementById('customerPieChart').getContext('2d');
-        customerPieChart = new Chart(ctxPie, {
-            type: 'pie',
-            data: {
-                labels: addressLabels,
-                datasets: [{
-                    label: 'Distribusi Alamat',
-                    data: addressValues,
-                    backgroundColor: ['rgba(255, 99, 132, 0.6)', 'rgba(54, 162, 235, 0.6)', 'rgba(255, 205, 86, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(153, 102, 255, 0.6)'],
-                    borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 205, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return `${context.label}: ${context.raw} pelanggan`;
-                            }
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Distribusi Alamat Pelanggan'
-                    }
-                }
-            }
-        });
-    }
-
-    function getRandomColor() {
-        const r = Math.floor(Math.random() * 256);
-        const g = Math.floor(Math.random() * 256);
-        const b = Math.floor(Math.random() * 256);
-        return `rgba(${r}, ${g}, ${b}, 0.7)`;
-    }
-
-    const dataPelanggan = [
-        <?php foreach ($pelanggan_list as $pelanggan) : ?> {
-                alamat: "<?= $pelanggan->alamat_customer ?>",
-                tglTransaksi: "<?= $pelanggan->tgl_transaksi_terakhir ?>",
-                totalTransaksi: <?= $pelanggan->total_custom_qty ?>
-            },
-        <?php endforeach; ?>
-    ];
-
-
-    const ctx = document.getElementById('myChart').getContext('2d');
-
-    function filterDataPelanggan(filterAlamat, filterTahun, filterBulan) {
-        return dataPelanggan.filter(item => {
-            const date = new Date(item.tglTransaksi);
-            const year = date.getFullYear();
-            const month = date.getMonth() + 1;
-
-            const validFilterAlamat = filterAlamat && filterAlamat !== 'all' ? item.alamat === filterAlamat : true;
-            const validFilterTahun = filterTahun && filterTahun !== 'all' ? year === parseInt(filterTahun) : true;
-            const validFilterBulan = filterBulan && filterBulan !== 'all' ? month === parseInt(filterBulan) : true;
-
-            if (!filterAlamat && !filterTahun && !filterBulan) {
-                return true;
-            }
-
-            return validFilterAlamat && validFilterTahun && validFilterBulan;
-        });
-    }
-
-
-
-    function getLabels(filteredData, filterTahun, filterBulan) {
-        filterTahun = filterTahun?.trim() === '' || !filterTahun ? 'all' : filterTahun;
-        filterBulan = filterBulan?.trim() === '' || !filterBulan ? 'all' : filterBulan;
-
-        let labels = [];
-
-        if (filterTahun === 'all' && filterBulan === 'all') {
-            labels = [...new Set(filteredData.map(item => new Date(item.tglTransaksi).getFullYear()))];
-        } else if (filterTahun !== 'all' && filterBulan === 'all') {
-            labels = [...new Set(
-                filteredData.map(item =>
-                    new Date(item.tglTransaksi).toLocaleString('id-ID', {
-                        month: 'long'
-                    })
-                )
-            )];
-        } else if (filterTahun !== 'all' && filterBulan !== 'all') {
-            labels = [...new Set(
-                filteredData
-                .filter(item => {
-                    const date = new Date(item.tglTransaksi);
-                    return date.getMonth() + 1 === parseInt(filterBulan);
-                })
-                .map(item => new Date(item.tglTransaksi).getDate())
-            )];
-        }
-
-        return labels;
-    }
-
-
-    function updateChartPelanggan(filteredData, filterTahun, filterBulan) {
-        const isTahunEmpty = !filterTahun || filterTahun === "";
-        const isBulanEmpty = !filterBulan || filterBulan === "";
-        const labels = getLabels(filteredData, filterTahun, filterBulan);
-
-        const dataByLabel = labels.map(label => {
-            const filteredDataByLabel = filteredData
-                .filter(item => {
-                    const date = new Date(item.tglTransaksi);
-                    const year = date.getFullYear();
-                    const month = date.getMonth() + 1;
-                    const day = date.getDate();
-
-                    if (isTahunEmpty && isBulanEmpty) {
-                        return year === label;
-                    } else {
-                        return (
-                            (isTahunEmpty || year === (isTahunEmpty ? year : parseInt(filterTahun))) &&
-                            (isBulanEmpty || month === parseInt(filterBulan)) &&
-                            (isBulanEmpty || day === label)
-                        );
-                    }
-                });
-
-            const total = filteredDataByLabel.reduce((sum, item) => sum + item.totalTransaksi, 0);
-            return total;
-        });
-
-
-        const randomColors = labels.map(() => getRandomColor());
-        myChart.data.labels = labels;
-        myChart.data.datasets[0].data = dataByLabel;
-        myChart.data.datasets[0].backgroundColor = randomColors;
-        myChart.data.datasets[0].borderColor = randomColors.map(color => color.replace('0.7', '1'));
-        let xAxisTitle = 'Waktu';
-        if (isBulanEmpty) {
-            xAxisTitle = 'Tahun';
-        } else if (!isBulanEmpty && !isTahunEmpty) {
-            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            xAxisTitle = `Tanggal di bulan ${months[parseInt(filterBulan) - 1]}`;
-        }
-
-        myChart.options.scales.x.title.text = xAxisTitle;
-        myChart.update();
-    }
-
-
-    const myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: [...new Set(dataPelanggan.map(item => new Date(item.tglTransaksi).getFullYear()))],
-            datasets: [{
-                label: 'Total Transaksi',
-                data: dataPelanggan.map(item => item.totalTransaksi),
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top'
-                },
-                title: {
-                    display: true,
-                    text: 'Distribusi Total Transaksi'
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const index = context.dataIndex;
-                            const label = context.label;
-                            const total = myChart.data.datasets[0].data[index];
-                            return `Label: ${label}, Total: ${total} pelanggan`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Waktu (Tahun/Bulan/Tanggal)'
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return value.toFixed(0);
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Total Pelanggan (dalam QTY)'
-                    }
-                }
-            }
-        }
     });
 
-    updateChart("", "", "", "", "");
-    const filteredData = filterDataPelanggan();
-    updateChartPelanggan(filteredData);
+    function updateChart() {
+        let currentStart = $('#reportrange').data('daterangepicker').startDate;
+        let currentEnd = $('#reportrange').data('daterangepicker').endDate;
+        const addressFilter = document.getElementById("addressFilter").value;
+        const productFilter = document.getElementById("productFilter").value;
 
-    // document.getElementById('filterAlamat').addEventListener('change', function() {
-    //     const filterAlamat = this.value;
-    //     const filterTahun = document.getElementById('filterTahun').value;
-    //     const filterBulan = document.getElementById('filterBulan').value;
+        // Filter data sales berdasarkan tanggal, alamat, dan produk
+        const filteredSales = salesData.filter(item =>
+            moment(item.tanggal, "YYYY-MM-DD").isBetween(currentStart, currentEnd, null, '[]') &&
+            (addressFilter === "" || item.alamat === addressFilter) && 
+            (productFilter === "" || item.nama_produk === productFilter)
+        );
 
-    //     const filteredData = filterDataPelanggan(filterAlamat, filterTahun, filterBulan);
-    //     updateChartPelanggan(filteredData, filterTahun, filterBulan);
-    // });
+        // Filter data customOrder berdasarkan tanggal dan alamat saja
+        const filteredCustomOrders = customOrderData.filter(item =>
+            moment(item.tanggal, "YYYY-MM-DD").isBetween(currentStart, currentEnd, null, '[]') &&
+            (addressFilter === "" || item.alamat === addressFilter)
+        );
 
-    // document.getElementById('filterTahun').addEventListener('change', function() {
-    //     const filterAlamat = document.getElementById('filterAlamat').value;
-    //     const filterTahun = this.value;
-    //     const filterBulan = document.getElementById('filterBulan').value;
+        updateChartWithData(filteredSales, filteredCustomOrders, currentStart, currentEnd);
+    }
 
-    //     const filteredData = filterDataPelanggan(filterAlamat, filterTahun, filterBulan);
-    //     updateChartPelanggan(filteredData, filterTahun, filterBulan);
-    // });
+    function updateChartWithData(filteredSales, filteredCustomOrders, start, end) {
+    const totalByDate = {}; // Total gabungan Produk + Jasa
+    const productDetails = {}; // Detail produk terjual per tanggal
+    const customerNamesByDate = {}; // Detail pelanggan jasa per tanggal
 
-    // document.getElementById('filterBulan').addEventListener('change', function() {
-    //     const filterAlamat = document.getElementById('filterAlamat').value;
-    //     const filterTahun = document.getElementById('filterTahun').value;
-    //     const filterBulan = this.value;
+    filteredSales.forEach(item => {
+        let date = item.tanggal;
+        let productName = item.nama_produk;
+        let qty = Number(item.total);
+        totalByDate[date] = (totalByDate[date] || 0) + qty;
 
-    //     const filteredData = filterDataPelanggan(filterAlamat, filterTahun, filterBulan);
-    //     updateChartPelanggan(filteredData, filterTahun, filterBulan);
-    // });
+        if (!productDetails[date]) {
+            productDetails[date] = {};
+        }
+        productDetails[date][productName] = (productDetails[date][productName] || 0) + qty;
+    });
+
+    filteredCustomOrders.forEach(item => {
+        let date = item.tanggal;
+        let pcs = Number(item.total_pcs);
+        totalByDate[date] = (totalByDate[date] || 0) + pcs; // Tambahin ke total gabungan
+
+        if (!customerNamesByDate[date]) {
+            customerNamesByDate[date] = [];
+        }
+        customerNamesByDate[date].push(`${item.nama_pelanggan}: ${pcs} pcs`);
+    });
+
+    let datesArray = [];
+    let totalsArray = [];
+    let tooltipData = [];
+    let currentDate = start.clone();
+
+    while (currentDate.isSameOrBefore(end)) {
+        let dateStr = currentDate.format("YYYY-MM-DD");
+        datesArray.push(currentDate.format('D MMM'));
+        totalsArray.push(totalByDate[dateStr] || 0);
+
+        let productTooltip = productDetails[dateStr]
+            ? Object.entries(productDetails[dateStr])
+                .map(([name, qty]) => `${name} x ${qty} pcs`)
+                .join('<br>')
+            : "Tidak ada penjualan";
+
+        let customOrderTooltip = customerNamesByDate[dateStr] && customerNamesByDate[dateStr].length > 0 
+            ? customerNamesByDate[dateStr].join('<br>')
+            : "Tidak ada pelanggan";
+
+        tooltipData.push(
+            `<b>Produk:</b><br>${productTooltip}<br><br><b>Jasa:</b><br>${customOrderTooltip}`
+        );
+
+        currentDate.add(1, 'day');
+    }
+
+    if (chart) {
+        chart.updateOptions({ 
+            xaxis: { categories: datesArray },
+            tooltip: {
+                custom: function({ seriesIndex, dataPointIndex }) {
+                    return `<div class="tooltip-box" style="padding:10px; background:#fff; border:1px solid #ddd;">
+                        ${tooltipData[dataPointIndex]}
+                    </div>`;
+                }
+            }
+        });
+        chart.updateSeries([
+            { name: 'Total Penjualan', data: totalsArray }
+        ]);
+    } else {
+        var options = {
+            chart: {
+                type: 'area',
+                height: 350
+            },
+            series: [
+                { name: 'Total Penjualan', data: totalsArray }
+            ],
+            xaxis: { 
+                categories: datesArray, 
+                tickPlacement: 'on' 
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 2,
+                colors: ['#012970']
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'light',
+                    type: 'vertical',
+                    shadeIntensity: 0.4,
+                    gradientToColors: ['#0055FF'], 
+                    inverseColors: false,
+                    opacityFrom: 0.6,
+                    opacityTo: 0,
+                    stops: [0, 100]
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            yaxis: {
+                labels: {
+                    formatter: function (value) {
+                        return value.toFixed(0);
+                    }
+                }
+            },
+            tooltip: {
+                custom: function({ seriesIndex, dataPointIndex }) {
+                    return `<div class="tooltip-box" style="padding:10px; background:#fff; border:1px solid #ddd;">
+                        ${tooltipData[dataPointIndex]}
+                    </div>`;
+                }
+            }
+        };
+
+        if (document.querySelector("#chart")) {
+            chart = new ApexCharts(document.querySelector("#chart"), options);
+            chart.render();
+        }
+    }
+}
+
+
+    function cb(start, end) {
+        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        updateChart();
+    }
+
+    if ($('#reportrange').length) {
+        $('#reportrange').daterangepicker({
+            startDate: start,
+            endDate: end,
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        }, cb);
+
+        cb(start, end);
+    }
+
+
+});
 </script>

@@ -3,14 +3,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class mCustom extends CI_Model
 {
-    public function pesanan_masuk()
-    {
-        $this->db->select('*');
-        $this->db->from('transaksi');
-        $this->db->join('custom', 'transaksi.id_transaksi = custom.id_transaksi', 'left');
-        $this->db->join('customer', 'customer.id_customer = transaksi.id_customer', 'left');
-        $this->db->where('transaksi.status_pesan=1');
-        return $this->db->get()->result();
+    public function pesanan_masuk() {  
+        $this->db->select('*');  
+        $this->db->from('transaksi');  
+        $this->db->join('custom', 'transaksi.id_transaksi = custom.id_transaksi', 'left');  
+        $this->db->join('customer', 'customer.id_customer = transaksi.id_customer', 'left');  
+        $this->db->where('transaksi.status_pesan', 1);  
+        $this->db->order_by('transaksi.status_order', 'ASC');  
+        $this->db->order_by('transaksi.update_at', 'DESC');  
+        return $this->db->get()->result();  
     }
     public function detail_custom($id)
     {
